@@ -8,7 +8,9 @@ class _SlidableStackActionPane extends StatelessWidget {
     @required this.child,
   })  : _animation = Tween<Offset>(
           begin: Offset.zero,
-          end: data.createOffset(data.totalActionsExtent * data.actionSign),
+          end: data.createOffset(
+              (data.totalActionsExtent - data.endAnimationOffset) *
+                  data.actionSign),
         ).animate(data.actionsMoveAnimation),
         super(key: key);
 

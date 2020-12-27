@@ -173,6 +173,7 @@ class SlidableData extends InheritedWidget {
     @required this.slidable,
     @required this.actionExtentRatio,
     @required this.direction,
+    @required this.endAnimationOffset,
     @required Widget child,
   }) : super(key: key, child: child);
 
@@ -212,6 +213,8 @@ class SlidableData extends InheritedWidget {
 
   /// The direction in which this widget can be slid.
   final Axis direction;
+
+  final double endAnimationOffset;
 
   /// Indicates whether the primary actions are currently shown.
   bool get showActions => actionType == SlideActionType.primary;
@@ -415,6 +418,7 @@ class Slidable extends StatefulWidget {
     SlidableDismissal dismissal,
     SlidableController controller,
     double fastThreshold,
+    double endAnimationOffset,
   }) : this.builder(
           key: key,
           child: child,
@@ -431,6 +435,7 @@ class Slidable extends StatefulWidget {
           dismissal: dismissal,
           controller: controller,
           fastThreshold: fastThreshold,
+          endAnimationOffset: endAnimationOffset,
         );
 
   /// Creates a widget that can be slid.
@@ -448,22 +453,23 @@ class Slidable extends StatefulWidget {
   /// which means the item after the dismissed item would be synced with the
   /// state of the dismissed item. Using keys causes the widgets to sync
   /// according to their keys and avoids this pitfall.
-  Slidable.builder({
-    Key key,
-    @required this.child,
-    @required this.actionPane,
-    this.actionDelegate,
-    this.secondaryActionDelegate,
-    this.showAllActionsThreshold = 0.5,
-    this.actionExtentRatio = _kActionsExtentRatio,
-    this.movementDuration = _kMovementDuration,
-    this.direction = Axis.horizontal,
-    this.closeOnScroll = true,
-    this.enabled = true,
-    this.dismissal,
-    this.controller,
-    double fastThreshold,
-  })  : assert(actionPane != null),
+  Slidable.builder(
+      {Key key,
+      @required this.child,
+      @required this.actionPane,
+      this.actionDelegate,
+      this.secondaryActionDelegate,
+      this.showAllActionsThreshold = 0.5,
+      this.actionExtentRatio = _kActionsExtentRatio,
+      this.movementDuration = _kMovementDuration,
+      this.direction = Axis.horizontal,
+      this.closeOnScroll = true,
+      this.enabled = true,
+      this.dismissal,
+      this.controller,
+      this.endAnimationOffset = 1.0,
+      double fastThreshold})
+      : assert(actionPane != null),
         assert(direction != null),
         assert(
             showAllActionsThreshold != null &&
@@ -534,6 +540,9 @@ class Slidable extends StatefulWidget {
 
   /// The threshold used to know if a movement was fast and request to open/close the actions.
   final double fastThreshold;
+
+  // Hackie: it uses to update the offset when rendering list item
+  final double endAnimationOffset;
 
   /// The state from the closest instance of this class that encloses the given context.
   static SlidableState of(BuildContext context) {
@@ -964,6 +973,7 @@ class SlidableState extends State<Slidable>
         slidable: widget,
         actionExtentRatio: widget.actionExtentRatio,
         direction: widget.direction,
+        endAnimationOffset: widget.endAnimationOffset,
         child: content,
       ),
     );
